@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'vk_data_grub'
+    'vk_data_grub',
 ]
 
 MIDDLEWARE = [
