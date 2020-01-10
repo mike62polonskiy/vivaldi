@@ -1,0 +1,39 @@
+*local_settings.py
+*debug_settings.py
+venv/
+./venv
+*.sqlite3
+./search_index
+media
+psd/
+/log/
+/tmp/
+/www/
+/media/
+/static/
+*.sqlite3
+src/static
+src/media
+
+# File system caches
+.DS_Store
+._*
+
+# IDE system files
+.ropeproject
+.vim
+.idea
+.tags
+.env
+.venv
+*.sublime-workspace
+*.sublime-project
+
+# Temporary files
+*.pyc
+*.sw[opn]
+*~
+/*.sqlite3
+
+# Other
+.vscode
