@@ -10,7 +10,8 @@ class VkGroups(models.Model):
     def __str__(self):
         return self.group_name    
     class Meta:
-        verbose_name = 'Группы'
+        verbose_name = 'Группа'
+        verbose_name_plural = 'Группы'
 
 class Events(models.Model):
     event_name = models.CharField(verbose_name='Название мероприятия', max_length=255)
@@ -25,4 +26,5 @@ class Events(models.Model):
         return self.event_name
 
     class Meta:
-        verbose_name = 'Мероприятия и туры'
+        verbose_name = 'Мероприятие (и/или) тур'
+        verbose_name_plural = 'Мероприятия (и/или) туры'
