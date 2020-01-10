@@ -16,10 +16,10 @@ class Events(models.Model):
     event_name = models.CharField(verbose_name='Название мероприятия', max_length=255)
     event_date = models.DateField(verbose_name='Дата мероприятия')
     event_time = models.TimeField(verbose_name='Время начала мероприятия')
-    event_place = models.CharField(verbose_name='Название площадки')
+    event_place = models.CharField(verbose_name='Название площадки', max_length=255)
     event_event_url = models.URLField(verbose_name='Ссылка на встречу вконтакте')
     event_image = models.ImageField(verbose_name='Афиша мероприятия')
-    event_contacts = models.CharField(verbose_name='Контакты оргов')
+    event_contacts = models.CharField(verbose_name='Контакты оргов', max_length=255)
 
     def __str__(self):
         return self.event_name
