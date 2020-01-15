@@ -3,24 +3,20 @@ import json
 import re
 
 from django.conf import settings
-from vk_data_grub.models import VkGroups
 
-token = 'fed01df21d3f3e56f5b0423f274e0c6aef6d11dbbbb23b3d34bb22a291787da6db5abc7133d4b8525a9bf'
+from vk_data_grub.models import VkGroups, Events
+
+token = settings.ACCESS_TOKEN
 session = vk.Session(access_token={token})
 api = vk.API(session, v='5.3', lang='ru', timeout=10)
 api_5_103 = vk.API(session, v='5.53', lang='ru', timeout=10)
 
-rock_bus_grid = "-71983141"
-rock_bus_afisha_id = "47187398"
-shtopor_gr_domain = "rzn_liveconcerts"
-svoboda_gr_domain = "krishna_ryazan_rock"
 
+def _get_tours():
+    qs = VkGroups.objects.filter(group_tag='rockbus_rzn')
+    rock_bus_grid = qs.values('group_id')[0]['group_id']
+    rock_bus_afisha_id = qs.values('group_afisha_id')[0]['group_afisha_id']
 
-def get_group_posts(group):
-    posts = api.wall.get(domain=group)
-    return posts
-
-def get_tours():
     tours = api.pages.get(owner_id=rock_bus_grid, page_id=rock_bus_afisha_id)
     data = json.dumps(tours)
     data_js = json.loads(data)
@@ -37,7 +33,10 @@ def get_tours():
 
     return url_arr
 
-def get_shtopor_events():
+def _get_shtopor_events():
+    qs = VkGroups.objects.filter(group_tag='shtopor')
+    shtopor_gr_domain = qs.values('group_domain')[0]['group_domain'] 
+
     events = api_5_103.groups.getById(group_ids=shtopor_gr_domain, fields="description")
     data = json.dumps(events[0])
     data_js = json.loads(data)
@@ -54,7 +53,10 @@ def get_shtopor_events():
     return url_arr
 
 #Кришна петух, он ведет группу как попало. Его поглатила водяра!!! поэтому сперва делаю выборку из ивентов имеющих встречу в вк.
-def get_krishna_events_with_club():
+def _get_krishna_events_with_club():
+    qs = VkGroups.objects.filter(group_tag='svoboda')
+    svoboda_gr_domain = qs.values('group_domain')[0]['group_domain']
+
     events = api_5_103.groups.getById(group_ids=svoboda_gr_domain, fields="description")
     data = json.dumps(events[0])
     data_js = json.loads(data)
@@ -74,3 +76,34 @@ def get_krishna_events_with_club():
         events_domain.append(item_with_domain)
 
     return events_domain
+
+def get_info_and_save(domains, group_tag):
+
+    for domain in domains:
+        if group_tag == 'shtopor':
+            place = 'Штопор(группа rzn live concerts)'
+        elif group_tag == 'rockbus_rzn':
+            place = 'RockBus(не клуб, выезды по городам)'
+        elif group_tag == 'svoboda':
+            place = 'SVОBODA'
+        
+        event_info = api_5_103.groups.getById(group_ids=domain, fields="description,start_date")
+        data = json.dumps(event_info[0])
+        data_js = json.loads(data)
+        name = data_js['name']
+        description = data_js['description']
+        event_datetime = data_js['start_date']
+        event_date = event_datetime[0]
+        event_time = event_datetime[1]
+        event_image = data_js['photo_200']
+
+        event = Events.objects.get()
+        event.event_name = name
+        event.event_date = event_date
+        event.event_time = event_time
+        event.event_description = description
+        event.event_place = place
+        event.event_url = 'https://vk.com/' + domain
+        event.event_image = event_image
+        event.save()
+
