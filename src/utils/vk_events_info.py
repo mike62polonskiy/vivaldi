@@ -31,7 +31,7 @@ def parse_and_save(json_data):
 
 
 def get_events_info():
-    qs = VkGroups.objects.get()
+    qs = VkGroups.objects.all()
     
     for item in qs:
         if item.group_afisha_id != 'None':
