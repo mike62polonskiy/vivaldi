@@ -6,28 +6,32 @@ from django.conf import settings
 from vk_data_grub.models import VkGroups, Events
 
 from classes.vk_data import GetDataVk
+from datetime import datetime
 
 
 vk_token = settings.ACCESS_TOKEN
 
-def parse_and_save(json_data):
+def parse_and_save(json_data, place, domain):
     json = json_data
     name = json['name']
     description = json['description']
-    event_datetime = json['start_date']
-    event_date = event_datetime[0]
-    event_time = event_datetime[1]
+    event_timestamp = json['start_date']
+    event_datetime = datetime.fromtimestamp(event_timestamp)
     event_image = json['photo_200']
+    url = 'https://vk.com/' + domain
     
-    event = Events.objects.get()
-    event.event_name = name
-    event.event_date = event_date
-    event.event_time = event_time
-    event.event_description = description
-    event.event_place = event_place
-    event.event_url = 'https://vk.com/' + domain
-    event.event_image = event_image
-    event.save()
+    event = Events.objects.all()
+    try:
+        obj = Events.objects.get(event_domain=domain)
+    except Events.DoesNotExist:
+        obj = Events(event_domain=domain, event_name = name, 
+                     event_datetime=event_datetime,
+                     event_description=description,
+                     event_place=place,
+                     event_url=url,
+                     event_image=event_image
+                    )
+        obj.save()
 
 
 def get_events_info():
@@ -43,11 +47,13 @@ def get_events_info():
             gr_domains_arr = vk.get_events_domains_by_grdomain(gr_id, afisha_id)
 
             for domain in gr_domains_arr:
-                result = bool(re.search(r'(album)', item))
-                if result == False:
+                result = re.search(r'(album)', domain)
+                if result:
+                    print('INFO: not event domain or url')
+                else:
                     vk = GetDataVk(token=vk_token)
                     json = vk.get_event_info(domain)
-                    parse_and_save(json)
+                    parse_and_save(json, event_place, domain)
         else:
             type_p = 'group'
             event_place = item.group_name
@@ -56,8 +62,10 @@ def get_events_info():
             gr_domains_arr = vk.get_events_domains_by_grid(gr_domain)
 
             for domain in gr_domains_arr:
-                result = bool(re.search(r'(album)', item))
-                if result == False:
+                result = re.search(r'(album)', domain)
+                if result:
+                    print('INFO: not event domain or url')
+                else:
                     vk = GetDataVk(token=vk_token)
                     json = vk.get_event_info(domain)
-                    parse_and_save(json)
+                    parse_and_save(json, event_place, domain)

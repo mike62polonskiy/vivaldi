@@ -16,9 +16,11 @@ class VkGroups(models.Model):
         verbose_name_plural = 'Группы'
 
 class Events(models.Model):
+    event_domain = models.CharField(verbose_name='домен мероприятия', max_length=255, default=None)
     event_name = models.CharField(verbose_name='Название мероприятия', max_length=255)
-    event_date = models.DateField(verbose_name='Дата мероприятия')
-    event_time = models.TimeField(verbose_name='Время начала мероприятия')
+#    event_date = models.CharField(verbose_name='Дата мероприятия', max_length=255)
+#    event_time = models.CharField(verbose_name='Время начала мероприятия', max_length=255)
+    event_datetime = models.DateTimeField(verbose_name='Дата и время', auto_now=False, auto_now_add=False, default=None)
     event_description = models.CharField(verbose_name='Описание мероприятия', max_length=30000, default=None)
     event_place = models.CharField(verbose_name='Название площадки', max_length=255)
     event_url = models.URLField(verbose_name='Ссылка на встречу вконтакте')
