@@ -1,6 +1,7 @@
 import vk
 import json
 import re
+import time
 
 from django.conf import settings
 from vk_data_grub.models import VkGroups, Events
@@ -19,19 +20,22 @@ def parse_and_save(json_data, place, domain):
     event_datetime = datetime.fromtimestamp(event_timestamp)
     event_image = json['photo_200']
     url = 'https://vk.com/' + domain
-    
-    event = Events.objects.all()
-    try:
-        obj = Events.objects.get(event_domain=domain)
-    except Events.DoesNotExist:
-        obj = Events(event_domain=domain, event_name = name, 
-                     event_datetime=event_datetime,
-                     event_description=description,
-                     event_place=place,
-                     event_url=url,
-                     event_image=event_image
-                    )
-        obj.save()
+    type_gr = json['type']
+
+    if type_gr == 'event':       
+        try:
+            obj = Events.objects.get(event_domain=domain)
+        except Events.DoesNotExist:
+            obj = Events(event_domain=domain, event_name = name, 
+                         event_datetime=event_datetime,
+                         event_description=description,
+                         event_place=place,
+                         event_url=url,
+                         event_image=event_image
+                        )
+            obj.save()
+    else:
+        print('Not a event type')
 
 
 def get_events_info():
@@ -52,6 +56,8 @@ def get_events_info():
                     print('INFO: not event domain or url')
                 else:
                     vk = GetDataVk(token=vk_token)
+                    '''у вк ограничение на запросы, поэтому перед каждым обращением делаю sleep'''
+                    time.sleep(10)
                     json = vk.get_event_info(domain)
                     parse_and_save(json, event_place, domain)
         else:
@@ -67,5 +73,7 @@ def get_events_info():
                     print('INFO: not event domain or url')
                 else:
                     vk = GetDataVk(token=vk_token)
+                    '''у вк ограничение на запросы, поэтому перед каждым обращением делаю sleep'''
+                    time.sleep(10)
                     json = vk.get_event_info(domain)
                     parse_and_save(json, event_place, domain)
