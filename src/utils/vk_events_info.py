@@ -13,6 +13,7 @@ from datetime import datetime
 vk_token = settings.ACCESS_TOKEN
 
 def parse_and_save(json_data, place, domain):
+    '''Парсинг json, проверка есть ли эвент в базе, и если нет то сохранение'''
     json = json_data
     name = json['name']
     description = json['description']
@@ -39,6 +40,7 @@ def parse_and_save(json_data, place, domain):
 
 
 def get_events_info():
+    #входные данные из бд, тут указыны slug групп в вк по которым нужно искать страницы эвентов
     qs = VkGroups.objects.all()
     
     for item in qs:
@@ -56,7 +58,7 @@ def get_events_info():
                     print('INFO: not event domain or url')
                 else:
                     vk = GetDataVk(token=vk_token)
-                    '''у вк ограничение на запросы, поэтому перед каждым обращением делаю sleep'''
+                    #у вк ограничение на запросы, поэтому перед каждым обращением делаю sleep
                     time.sleep(10)
                     json = vk.get_event_info(domain)
                     parse_and_save(json, event_place, domain)
@@ -73,7 +75,7 @@ def get_events_info():
                     print('INFO: not event domain or url')
                 else:
                     vk = GetDataVk(token=vk_token)
-                    '''у вк ограничение на запросы, поэтому перед каждым обращением делаю sleep'''
+                    #у вк ограничение на запросы, поэтому перед каждым обращением делаю sleep
                     time.sleep(10)
                     json = vk.get_event_info(domain)
                     parse_and_save(json, event_place, domain)

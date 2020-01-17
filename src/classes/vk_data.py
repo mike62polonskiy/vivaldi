@@ -23,6 +23,8 @@ class GetDataVk:
         return vk.API(session, v=api_version, lang='ru', timeout=10)
 
     def get_events_domains_by_grdomain(self, grid, pageid):
+        '''получаею id эвентов в вк из страницы группы, обычно это афиша https://vk.com/rockbus_rzn?w=page-71983141_47187398
+        тут я беру форматированные строки в формате [event123|Тур в вальхалу] и получаю то что слева, пакую это в список.'''
         page_info = self._api().pages.get(owner_id=grid, page_id=pageid)
         data = json.dumps(page_info)
         data_js = json.loads(data)
@@ -37,6 +39,7 @@ class GetDataVk:
         return domains_arr
         
     def get_events_domains_by_grid(self, grid):
+        '''Тоже самое что и метод выше, только из поля description'''
         events = self._api().groups.getById(group_ids=grid, fields="description")
         data = json.dumps(events[0])
         data_js = json.loads(data)
@@ -51,6 +54,7 @@ class GetDataVk:
         return url_arr
 
     def get_event_info(self, domain):
+        '''Здесь по домену группы получаю http ответ , пакую в json для дальнейшего использования'''
         info = self._api().groups.getById(group_ids=domain, fields="description,start_date")
         data = json.dumps(info[0])
         data_js = json.loads(data)
