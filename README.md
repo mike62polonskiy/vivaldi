@@ -18,6 +18,8 @@
 
 Запустить проект: docker-compose -f .docker/docker-compose.yml up -d
 
+Запуск миграций: python /app/src/manage.py migrate
+
 в контейнере с джангой добавить в админку пользователя: python /app/src/manage.py createsupeuser
 
 ### Запуск парсера ###
