@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'vk_data_grub',
+    'tg_bot',
 ]
 
 MIDDLEWARE = [

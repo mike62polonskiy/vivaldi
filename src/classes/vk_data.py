@@ -26,9 +26,9 @@ class GetDataVk:
         '''получаею id эвентов в вк из страницы группы, обычно это афиша https://vk.com/rockbus_rzn?w=page-71983141_47187398
         тут я беру форматированные строки в формате [event123|Тур в вальхалу] и получаю то что слева, пакую это в список.'''
         page_info = self._api().pages.get(owner_id=grid, page_id=pageid)
-        data = json.dumps(page_info)
-        data_js = json.loads(data)
-        data_events = data_js['source']
+        page_info = json.dumps(page_info)
+        page_info = json.loads(page_info)
+        data_events = page_info['source']
         events_arr = re.findall(r'\[(.*?)\]', data_events)
         
         domains_arr = []

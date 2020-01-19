@@ -1,3 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
+from . import models
+
+@admin.register(models.BotInfo)
+class BotInfo(admin.ModelAdmin):
+    show_full_result_count = False
+
+@admin.register(models.Users)
+class Users(admin.ModelAdmin):
+    show_full_result_count = False
